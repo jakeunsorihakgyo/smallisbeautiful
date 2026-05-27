@@ -3,144 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>작은소리학교 - 도시 속의 마을굿</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Pretendard:wght@400;600&display=swap" rel="stylesheet">
+    <title>비영리 민간단체 작은소리학교</title>
     <style>
-        body { font-family: 'Pretendard', sans-serif; }
-        h1, h2, .serif { font-family: 'Noto+Serif+KR', serif; }
-        .bg-traditional { background-color: #fdfaf5; } /* 따뜻한 한지 느낌의 배경색 */
-        .text-point { color: #8b4513; } /* 전통적인 갈색 포인트 */
+        /* 기본 스타일 초기화 */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Pretendard', 'Noto Sans KR', sans-serif; }
+        body { background-color: #fcfbf9; color: #333; line-height: 1.6; }
+        a { text-decoration: none; color: inherit; }
+
+        /* 상단 네비게이션 & 드롭다운 */
+        header { background-color: #ffffff; border-bottom: 1px solid #eaddca; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; }
+        .logo { font-size: 1.4rem; font-weight: bold; color: #8b5a2b; letter-spacing: -0.5px; }
+        
+        .nav-menu { display: flex; list-style: none; }
+        .nav-item { position: relative; padding: 10px 20px; }
+        .nav-item > a { font-weight: 600; color: #444; font-size: 1.05rem; transition: color 0.2s; }
+        .nav-item:hover > a { color: #8b5a2b; }
+
+        /* 드롭다운 메뉴 핵심 설정 */
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #ffffff;
+            border: 1px solid #eaddca;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            list-style: none;
+            width: 160px;
+            padding: 8px 0;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+        }
+        .dropdown li a {
+            display: block;
+            padding: 10px 16px;
+            font-size: 0.95rem;
+            color: #666;
+            text-align: center;
+            transition: background 0.2s, color 0.2s;
+        }
+        .dropdown li a:hover {
+            background-color: #f7f3ed;
+            color: #8b5a2b;
+            font-weight: 500;
+        }
+        /* 마우스 올리면 드롭다운이 부드럽게 나타남 */
+        .nav-item:hover .dropdown {
+            opacity: 1;
+            visibility: visible;
+            top: 90%;
+        }
+
+        /* 메인 배너 */
+        .hero { background: linear-gradient(rgba(139,90,43,0.04), rgba(252,251,249,0)), url('#') no-repeat center/cover; padding: 100px 20px; text-align: center; border-bottom: 1px solid #f0e6d6; }
+        .hero h1 { font-size: 2.5rem; color: #3a2212; margin-bottom: 15px; letter-spacing: -1px; }
+        .hero p { font-size: 1.2rem; color: #665; max-width: 700px; margin: 0 auto; }
+
+        /* 본문 컨테이너 */
+        .main-content { max-width: 1200px; margin: 0 auto; padding: 60px 20px; }
+        section { display: none; } /* 메뉴 클릭 시 전환 효과용 기본 숨김 */
+        section.active { display: block; animation: fadeIn 0.4s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title { font-size: 1.8rem; color: #3a2212; margin-bottom: 30px; border-left: 5px solid #8b5a2b; padding-left: 15px; }
+
+        /* 연혁(Timeline) 스타일 */
+        .timeline { position: relative; max-width: 800px; margin: 0 auto; padding: 20px 0; }
+        .timeline::after { content: ''; position: absolute; width: 2px; background-color: #eaddca; top: 0; bottom: 0; left: 150px; }
+        .time-block { position: relative; margin-bottom: 40px; display: flex; }
+        .time-year { width: 130px; font-size: 1.2rem; font-weight: bold; color: #8b5a2b; text-align: right; padding-right: 20px; flex-shrink: 0; }
+        .time-content { padding-left: 40px; flex-grow: 1; }
+        .time-content h3 { font-size: 1.1rem; color: #333; margin-bottom: 5px; }
+        .time-content p { color: #666; font-size: 0.95rem; }
+        /* 타임라인 점 */
+        .time-block::before { content: ''; position: absolute; width: 12px; height: 12px; border-radius: 50%; background-color: #8b5a2b; left: 145px; top: 6px; z-index: 1; border: 2px solid #fcfbf9; }
+
+        /* 카드 그리드 (소개/사업) */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 300px; gap: 30px; margin-top: 20px; }
+        .card { background: #fff; border: 1px solid #eaddca; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.01); }
+        .card h3 { color: #8b5a2b; margin-bottom: 12px; font-size: 1.25rem; }
+
+        /* 푸터 정보 */
+        footer { background-color: #2e251f; color: #ccc; padding: 40px 20px; font-size: 0.9rem; border-top: 4px solid #8b5a2b; }
+        .footer-container { max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px; }
+        .footer-info p { margin-bottom: 6px; }
+        .footer-logo { font-size: 1.2rem; font-weight: bold; color: #fff; margin-bottom: 10px; }
+
+        /* 모바일 반응형 처리 */
+        @media (max-width: 768px) {
+            .nav-container { flex-direction: column; gap: 15px; }
+            .nav-menu { flex-wrap: wrap; justify-content: center; }
+            .timeline::after { left: 20px; }
+            .time-block { flex-direction: column; padding-left: 40px; }
+            .time-year { text-align: left; width: auto; padding-right: 0; margin-bottom: 5px; }
+            .time-block::before { left: 15px; }
+            .time-content { padding-left: 0; }
+        }
     </style>
 </head>
-<body class="bg-traditional text-gray-800">
+<body>
 
-    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
-        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-            <a href="#" class="text-2xl font-bold text-point serif tracking-tighter">작은소리학교</a>
-            
-            <div class="hidden md:flex space-x-8 font-medium">
-                <a href="#about" class="hover:text-point transition">학교소개</a>
-                <a href="#performance" class="hover:text-point transition">공연소식</a>
-                <a href="#education" class="hover:text-point transition">교육프로그램</a>
-                <a href="#notice" class="hover:text-point transition">알림마당</a>
-                <a href="#contact" class="hover:text-point transition">오시는길</a>
-            </div>
-
-            <div class="md:hidden">
-                <button id="menu-btn" class="p-2 text-gray-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-b px-4 py-4 space-y-3 shadow-lg">
-            <a href="#about" class="block font-medium">학교소개</a>
-            <a href="#performance" class="block font-medium">공연소식</a>
-            <a href="#education" class="block font-medium">교육프로그램</a>
-            <a href="#notice" class="block font-medium">알림마당</a>
-            <a href="#contact" class="block font-medium">오시는길</a>
-        </div>
-    </nav>
-
-    <header class="relative h-[70vh] flex items-center justify-center overflow-hidden bg-gray-900 text-white">
-        <div class="absolute inset-0 opacity-50 bg-[url('https://images.unsplash.com/photo-1599411933092-be224a180373?q=80&w=2000')] bg-cover bg-center"></div>
-        <div class="relative z-10 text-center px-4">
-            <p class="text-lg md:text-xl mb-4 tracking-widest opacity-90">서울시 비영리민간단체 제382호</p>
-            <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">도시 속의 마을굿,<br>전통의 울림을 전하다</h1>
-            <a href="#performance" class="inline-block bg-point text-white px-8 py-3 rounded-full hover:bg-opacity-90 transition shadow-lg bg-[#8b4513]">최신 공연 보기</a>
+    <header>
+        <div class="nav-container">
+            <div class="logo"><a href="#" onclick="showSection('intro')">작은소리학교</a></div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" onclick="showSection('intro')">학교소개</a>
+                    <ul class="dropdown">
+                        <li><a href="#" onclick="showSection('intro')">설립취지</a></li>
+                        <li><a href="#" onclick="showSection('history')">학교연혁</a></li>
+                        <li><a href="#" onclick="showSection('rules')">학교회칙</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" onclick="showSection('business')">주요사업</a>
+                    <ul class="dropdown">
+                        <li><a href="#" onclick="showSection('business')">전통예술공연</a></li>
+                        <li><a href="#" onclick="showSection('business')">문화예술교육</a></li>
+                        <li><a href="#" onclick="showSection('town')">2026 마을굿</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" onclick="showSection('members')">회원참여</a>
+                </li>
+            </ul>
         </div>
     </header>
 
-    <section id="about" class="max-w-4xl mx-auto py-20 px-4 text-center">
-        <h2 class="text-3xl font-bold mb-8 serif">작은소리학교는?</h2>
-        <p class="text-lg leading-relaxed text-gray-600 mb-6">
-            전통문화가 현대 도심 속에서 단절되지 않고 공동체의 삶과 어우러지도록 활동하는 문화예술 단체입니다.<br>
-            삭막한 도심에 전통 축제의 신명과 결속력을 불어넣는 "도시 속의 마을굿"을 지향합니다.
-        </p>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
-            <div class="p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
-                <h3 class="text-xl font-semibold mb-3 serif">예술감독 한선모</h3>
-                <p class="text-gray-500">국가무형유산 남사당놀이 이수자로서 전통의 본질을 지키며 현대적 감각을 더합니다.</p>
-            </div>
-            <div class="p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
-                <h3 class="text-xl font-semibold mb-3 serif">주요 활동</h3>
-                <p class="text-gray-500">전통 인형극 '덜미', 안산자락길 정기공연, 시민 교육 프로그램 등 운영</p>
-            </div>
-        </div>
-    </section>
+    <div class="hero">
+        <h1>"도시 속의 마을굿"</h1>
+        <p>예술과 인문을 바탕으로 공동체적 삶의 회복과 우리 소리의 창조적 계승을 실천하는 문화예술 전문 단체입니다.</p>
+    </div>
 
-    <section id="performance" class="bg-white py-20 px-4">
-        <div class="max-w-6xl mx-auto">
-            <div class="flex items-end justify-between mb-12">
-                <div>
-                    <h2 class="text-3xl font-bold serif">활동 및 공연</h2>
-                    <p class="text-gray-500 mt-2">전통의 신명을 직접 만나보세요.</p>
+    <main class="main-content">
+        
+        <section id="intro" class="active">
+            <h2 class="section-title">설립 취지 (세 갈래 뜻)</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>🌾 도시 속 마을굿</h3>
+                    <p>삭막한 도심 속에서 이웃과 이웃을 잇고, 공동체의 결속을 붇돋우는 전통 축제와 대동의 정신을 현대적으로 재현합니다.</p>
+                </div>
+                <div class="card">
+                    <h3>📖 깊이 있는 배움</h3>
+                    <p>단순한 기능 전수를 넘어 예술과 인문학을 융합하여 전통문화의 본질과 역사적 깊이를 바르게 이해하는 교육을 지향합니다.</p>
+                </div>
+                <div class="card">
+                    <h3>🥁 전통의 울림</h3>
+                    <p>역동적인 풍물 공연과 교육 활동을 통해 우리 소리가 가진 고유한 아름다움을 현재 그리고 다음 세대와 생생히 공유합니다.</p>
                 </div>
             </div>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="group cursor-pointer">
-                    <div class="aspect-video bg-gray-200 rounded-2xl mb-4 overflow-hidden shadow-md">
-                        <div class="w-full h-full bg-[url('https://images.unsplash.com/photo-1545642823-388909e4695b?w=800')] bg-cover group-hover:scale-105 transition duration-500"></div>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">남사당놀이 '덜미'</h3>
-                    <p class="text-gray-600 text-sm">해학적이고 풍자적인 전통 인형극의 진수를 보여줍니다.</p>
-                </div>
-                <div class="group cursor-pointer">
-                    <div class="aspect-video bg-gray-200 rounded-2xl mb-4 overflow-hidden shadow-md">
-                        <div class="w-full h-full bg-[url('https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=800')] bg-cover group-hover:scale-105 transition duration-500"></div>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">안산자락길 공연</h3>
-                    <p class="text-gray-600 text-sm">자연과 어우러지는 서대문구 안산에서의 정기 거리공연입니다.</p>
-                </div>
-                <div id="education" class="group cursor-pointer">
-                    <div class="aspect-video bg-gray-200 rounded-2xl mb-4 overflow-hidden shadow-md">
-                        <div class="w-full h-full bg-[url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800')] bg-cover group-hover:scale-105 transition duration-500"></div>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">시민 교육 프로그램</h3>
-                    <p class="text-gray-600 text-sm">전통 악기 배우기 및 인형 제작 워크숍을 진행합니다.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <footer id="contact" class="bg-gray-50 py-16 px-4 border-t border-gray-200 text-gray-600">
-        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div>
-                <h2 class="text-2xl font-bold mb-6 serif text-gray-900 tracking-tighter">작은소리학교</h2>
-                <p class="mb-2">주소: (03731) 서울특별시 서대문구 통일로 333 라동 1층 (홍제동)</p>
-                <p class="mb-2">대표번호: 02-736-5280</p>
-                <p class="mb-6">이메일: jakeunsorihakgyo@gmail.com</p>
-                <div class="flex space-x-4">
-                     <span class="text-sm border px-3 py-1 rounded-full border-gray-300">서울시 제382호 비영리민간단체</span>
+        <section id="history">
+            <h2 class="section-title">학교 연혁 (발자취)</h2>
+            <div class="timeline">
+                <div class="time-block">
+                    <div class="time-year">2026년</div>
+                    <div class="time-content">
+                        <h3>풍물 및 마을굿 기반 공동체 사업 확장</h3>
+                        <p>도시사회 고립 해결을 위한 지역 주민 참여형 신규 전통연희 축제 및 국악 기획 공연 전개</p>
+                    </div>
+                </div>
+                <div class="time-block">
+                    <div class="time-year">2013년 ~ 현재</div>
+                    <div class="time-content">
+                        <h3>서대문구 안산자락길 정기 상설공연</h3>
+                        <p>'문화의 향기' 야외 상설 공연 누적 개최 및 지역 밀착형 문화 활동 지속 실천</p>
+                    </div>
+                </div>
+                <div class="time-block">
+                    <div class="time-year">2001년</div>
+                    <div class="time-content">
+                        <h3>작은소리학교 설립</h3>
+                        <p>전통 예술의 가치 회복 및 현대적 계승을 모토로 문화예술 전문 단체 출범 및 회칙 제정</p>
+                    </div>
                 </div>
             </div>
-            <div class="bg-white p-4 rounded-2xl shadow-inner border border-gray-200 min-h-[200px] flex items-center justify-center">
-               <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3161.927891056934!2d126.94675948941442!3d37.580315651243204!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357c98767c43f97f%3A0x6b49aee5e28c361d!2z7ISc7Jq47Yq567OE7IucIOyEnOuMgOusuOq1rCDthrXsnbzroZwgMzMz!5e0!3m2!1sko!2skr!4v1778139878699!5m2!1sko!2skr"
-                   width="100%"
-                   height="100%"
-                   style="border:0;"
-                   allowfullscreen=""
-                   loading="lazy"
-                   referrerpolicy="no-referrer-when-downgrade">
-                </iframe>
+        </section>
+
+        <section id="business">
+            <h2 class="section-title">주요 사업 안내</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>🎭 전통 공연 예술 활동</h3>
+                    <p>사물놀이, 판굿 등 역동적인 타악 공연과 더불어 국가무형유산 제3호 남사당놀이의 인형극인 '덜미(꼭두각시놀음)'를 전문적으로 공연 및 보급합니다.</p>
+                </div>
+                <div class="card">
+                    <h3>🎓 교육 및 인재 양성</h3>
+                    <p>일반인과 청소년 대상 풍물·소리 교육을 운영하며, 상주 예술단 지원을 통해 전문 예술인을 육성하고 지역사회 교육가로 활동하도록 돕습니다.</p>
+                </div>
             </div>
-        </div>
-        <div class="max-w-6xl mx-auto mt-12 pt-8 border-t border-gray-200 text-center text-xs opacity-50">
-            © 2001 SMALL IS BEAUTIFUL. ALL RIGHTS RESERVED.
+        </section>
+
+        <section id="town">
+            <h2 class="section-title">2026 공동체 문화활동 비전</h2>
+            <div class="card" style="margin-top:20px;">
+                <h3 style="font-size:1.4rem;">마을굿을 통한 이웃과의 연결</h3>
+                <p style="margin-top:10px; font-size:1.05rem;">작은소리학교는 2026년 전통 예술을 공연장 밖 주민들의 일상 공간으로 이끌어냅니다. 서대문구를 거점으로 안산자락길 공연, 구민 건강 걷기대회, 농경·생활문화 현장 찬조 공연 등 고립과 세대 단절을 극복하는 주민 참여형 대동의 현장을 넓혀가고 있습니다.</p>
+            </div>
+        </section>
+
+        <section id="rules">
+            <h2 class="section-title">운영의 원칙 (회칙)</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>🤝 비영리 및 공익성</h3>
+                    <p>작은소리학교의 모든 활동과 행위는 영리를 목적으로 하지 않으며, 구성원 간 사적 이익 분배를 절대 하지 않는 공익적 가치를 최우선으로 합니다.</p>
+                </div>
+                <div class="card">
+                    <h3>⚖️ 정치 · 종교적 중립</h3>
+                    <p>특정 정당 또는 선거 후보자를 지지하거나, 특정 종교의 교리 전파 및 포교를 목적으로 운영하지 않는 철저한 중립성을 지킵니다.</p>
+                </div>
+                <div class="card">
+                    <h3>👁️ 재정의 투명성</h3>
+                    <p>구성원이 납부한 회비와 모든 사업 수익은 공연, 교육, 단체 유지비 등 목적 사업에만 사용하며 내역을 회원 모두에게 투명하게 공개합니다.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="members">
+            <h2 class="section-title">회원 체계 및 참여 안내</h2>
+            <p style="margin-bottom:20px; font-size:1.1rem;">작은소리학교는 회원분들의 소중한 참여와 후원으로 투명하게 운영됩니다.</p>
+            <div class="grid">
+                <div class="card">
+                    <h3>👤 정회원</h3>
+                    <p>단체의 설립 목적에 동의하고 소정의 총회 의결과 정기 회비를 납부하며, 단체의 민주적인 운영과 최고 의결에 참여하는 주체입니다.</p>
+                </div>
+                <div class="card">
+                    <h3>🧡 후원회원</h3>
+                    <p>정치·종교 중립을 준수하며 작은소리학교의 전통문화 발전 및 공동체 확장 사업을 재정적으로 지원하고 응원하는 따뜻한 동반자입니다.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-info">
+                <div class="footer-logo">비영리민간단체 작은소리학교</div>
+                <p><strong>대표자 / 예술감독:</strong> 한선모 (국가무형유산 남사당놀이 이수자)</p>
+                <p><strong>등록 정보:</strong> 서울특별시 비영리민간단체 제382호</p>
+                <p><strong>사무실 주소:</strong> 서울특별시 서대문구 북아현로 82-1, 3층</p>
+            </div>
+            <div class="footer-info" style="text-align: right; align-self: flex-end;">
+                <p><strong>연락처:</strong> 02-740-1984 / 02-353-5280</p>
+                <p style="color: #8b5a2b; margin-top: 10px;">© 2026 작은소리학교. All Rights Reserved.</p>
+            </div>
         </div>
     </footer>
 
     <script>
-        // 모바일 메뉴 토글 스크립트
-        const menuBtn = document.getElementById('menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
+        function showSection(sectionId) {
+            // 모든 섹션을 숨김
+            const sections = document.querySelectorAll('.main-content section');
+            sections.forEach(sec => sec.classList.remove('active'));
+            
+            // 클릭한 섹션만 보여줌
+            const targetSection = document.getElementById(sectionId);
+            if(targetSection) {
+                targetSection.classList.add('active');
+                // 화면을 본문 시작 지점으로 부드럽게 스크롤
+                window.scrollTo({ top: document.querySelector('header').offsetHeight, behavior: 'smooth' });
+            }
+        }
     </script>
 </body>
 </html>
